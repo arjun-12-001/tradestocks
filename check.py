@@ -91,6 +91,7 @@ with colum2:
         opn_cls.reset_index(inplace=True)
         opn_cls = opn_cls[opn_cls['Date']>d1]
         opn_cls = opn_cls[opn_cls['Date']<d2]
+        
         opn_cls.set_index('Date',inplace=True)
         print(opn_cls)
         # opn_cls['Date'].astype(datetime)

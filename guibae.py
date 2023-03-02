@@ -1,6 +1,7 @@
 import tkinter
 import customtkinter
 from PIL import ImageTk,Image
+import database as db
 import webbrowser
 
 customtkinter.set_appearance_mode("System")  # Modes: system (default), light, dark
@@ -11,26 +12,27 @@ app = customtkinter.CTk()  #creating cutstom tkinter window
 app.geometry("600x440")
 app.title('Login')
 
-username = ["arjun","chris","sivaram","lakshmi"]
-password =  "12345"
-
-def button_function():
-	# new_window = customtkinter.CTkToplevel(app)
-	# new_window.title("New Window")
-	# new_window.geometry("350x150")
+def button_function1():
 	
-	if entry1.get() in username and entry2.get() == password:webbrowser.open("http://localhost:8501")
-		# tkmb.showinfo(title="Login Successful",message="You have logged in Successfully")
-		# customtkinter.CTkLabel(new_window,text="GeeksforGeeks is best for learning ANYTHING !!").pack()
-
-	elif entry1.get() == username and entry2.get() != password:
-		tkinter.messagebox.showwarning(title='Wrong password',message='Please check your password')
+	value = db.selected()	
+	listed = []
+	for row in value:
+		listed.append(row[0])
+	usrnam = entry1.get()
+	
+	if usrnam in listed:
+		passchek = db.check(usrnam)
 		
-	elif entry1.get() != username and entry2.get() == password:
-		tkinter.messagebox.showwarning(title='Wrong username',message='Please check your username')
+		if entry2.get() == passchek:
+			webbrowser.open("http://localhost:8501")
 
+		else:
+			tkinter.messagebox.showwarning(title='Wrong password',message='Wrong password')
 	else:
-		tkinter.messagebox.showerror(title="Login Failed",message="Invalid Username and password")
+		tkinter.messagebox.showerror(title="Login Failed",message="Invalid Username or password")
+
+def button_function2():
+	print("hello button 2")
 
 label = customtkinter.CTkLabel(app,text="Portfolio Management")
   
@@ -60,8 +62,11 @@ l3=customtkinter.CTkLabel(master=frame, text="Forget password?",font=('Century G
 l3.place(x=155,y=195)
 
 #Create custom button
-button1 = customtkinter.CTkButton(master=frame, width=220, text="Login", command=button_function, corner_radius=6)
+button1 = customtkinter.CTkButton(master=frame, width=220, text="Login", command=button_function1, corner_radius=6)
 button1.place(x=50, y=240)
+
+button2 = customtkinter.CTkButton(master=frame,width=200, text="Sign-Up", command=button_function2, corner_radius=6)
+button2.place(x=60, y=300)
 
 # You can easily integrate authentication system 
 
