@@ -39,4 +39,21 @@ def comp(val=0,compy_name ="NULL"):
       count = count + 1 
     return sym_names[compy_name]
 
+  elif val==4 and compy_name != "NULL":
+    names = []
+    simps = []
+    sym_names = {}
+    data = pd.read_csv("EQUITY_L.csv")
+    symbols = data["SYMBOL"]
+    comp_names = data["NAME OF COMPANY"].tolist()
+   
+    count = 0
+    for comp_name in comp_names:
+      sym_names[comp_name] = symbols[count]
+      count = count + 1 
     
+    for comp in comp_names:
+      if comp.lower().startswith(compy_name):
+        names.append(comp)
+        simps.append(sym_names[comp])
+    return names,simps    

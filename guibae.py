@@ -1,4 +1,4 @@
-import tkinter
+import tkinter 
 import customtkinter
 from PIL import ImageTk,Image
 import database as db
@@ -9,8 +9,11 @@ customtkinter.set_default_color_theme("green")  # Themes: blue (default), dark-b
 
 
 app = customtkinter.CTk()  #creating cutstom tkinter window
-app.geometry("600x440")
+app.geometry("500x400")
 app.title('Login')
+
+enter1 = None
+enter2 = None
 
 def button_function1():
 	
@@ -31,15 +34,33 @@ def button_function1():
 	else:
 		tkinter.messagebox.showerror(title="Login Failed",message="Invalid Username or password")
 
+	
 def button_function2():
-	print("hello button 2")
+	new = customtkinter.CTkToplevel(frame) 
+	new.geometry("600x360")
+
+	frames=customtkinter.CTkFrame(master=new, width=320, height=220, corner_radius=15)
+	frames.place(relx=0.5, rely=0.5, anchor=tkinter.CENTER)
+
+	ll2=customtkinter.CTkLabel(master=new, text="Sign-up",font=('Century Gothic',20))
+	ll2.place(x=260, y=45)
+
+	enter1=customtkinter.CTkEntry(master=new, width=200, placeholder_text='New Username')
+	enter1.place(x=190, y=110)
+
+
+	enter2=customtkinter.CTkEntry(master=new, width=200, placeholder_text='New Password', show="*")
+	enter2.place(x=190, y=165)
+
+	button3 = customtkinter.CTkButton(master=new, width=200, text="Sign-Up", command=button_signup, corner_radius=6)
+	button3.place(x=190, y=240)		
+
+def button_signup():
+	print("you clicked signup ")
+	
 
 label = customtkinter.CTkLabel(app,text="Portfolio Management")
-  
 label.pack(pady=20)
-
-    
-
 
 img1=ImageTk.PhotoImage(Image.open("pic.jpg"))
 l1=customtkinter.CTkLabel(master=app,image=img1)
