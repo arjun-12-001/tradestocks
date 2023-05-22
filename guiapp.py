@@ -1,17 +1,15 @@
 import streamlit as st, pandas as pd, numpy as np, yfinance as yf
 import plotly.express as px
 from stocknews import StockNews
-import querryfinance as qf
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from GoogleNews import GoogleNews
-import streamlit_authenticator as stauth
 import stonks
 from streamlit_lottie import st_lottie
 import os,requests,json
-import streamlit_authenticator as stauth 
 from yahooquery import Ticker
+import plotly.graph_objs as go
 import pandas as pd 
-
+import tradingview as tv
 
 st.title("Stock Portfolio Dashboard")
 try:
@@ -39,7 +37,7 @@ with st.expander("Description"):
         -This Dahboard allows you to selct a necessary stock you wish to proceed to buy or sell and 
         alalytics are done necessarily
     """)
-
+to_ml = []# to pass to prophet model 
 try:
     st.sidebar.subheader("Select Company")
     companies = stonks.comp(1)
@@ -57,8 +55,8 @@ try:
         data =yf.download(ticker,start=start_date,end=end_date)
         fig = px.line(data,x = data.index,y=data["Adj Close"],title=ticker)
         st.plotly_chart(fig)
-
-        pricing_data, related_top_stocks, news = st.tabs(["Pricing Data","Fundamental Data", "Top 10 News"])
+        st.subheader("Equity Outlook and Fundamentals")
+        pricing_data, fundamental, news = st.tabs(["Pricing Data","Fundamental Data", "Top 10 News"])
 
         with pricing_data:
             st.write("Price Tracking :",ticker)
@@ -72,7 +70,8 @@ try:
             st.write("Standard Devoiation : ",stdev*100,"%")
             st.write("Risk Adj. Return : ",annual_ret/(stdev*100))
 
-        with related_top_stocks:
+        with fundamental:
+            st.subheader("Stock to hold : ")
             try:
                 comps = pd.read_csv("names_new.csv")
                 good_ones = []
@@ -83,15 +82,16 @@ try:
                     if val[symbol]["recommendationKey"] == "strong_buy":
                         good_ones.append(symbol)
                 for i in good_ones:
-                    st.write(i)
-                    data = Ticker(i).summary_detail
-                    for i in data['SBIN.NS']:
-                        if data["SBIN.NS"][i] != None:
-                            print(str(i) +" : "+str(data["SBIN.NS"][i]))
+                    st.subheader("company : "+i)
+                    with st.expander("Eqity Info"):
+                        data = Ticker(i).summary_detail
+                        for j in data[i]:
+                            if data[i][j] != None:
+                                st.write(str(j)+" : "+str(data[i][j]))
+                to_ml = good_ones
             except:
                 pass
-
-
+            
         with news:
             try:
                 gn = GoogleNews(lang='en',region='India',period='7d')
@@ -136,6 +136,35 @@ try:
                 
             except:
                 st.write("news was not fetched")
+    st.subheader("Stock Screener")
+    gainers = tv.top_gainer()
+    week_high = tv.week_52()
+    vol = tv.volume()
+    gain_val,week,volu = st.tabs(["Top Gainer","52 Week High","Volume Change"])
+    with gain_val:
+        d1 = {'Top Gainers':gainers}
+        d1 = pd.DataFrame(d1)
+        d1['Sl No'] = range(1, len(d1) + 1)
+        d1.set_index(['Sl No'],inplace=True)
+        st.table(d1)         
+    with week:
+        d2 = {'52 week high':week_high}
+        d2 = pd.DataFrame(d2)
+        d2['Sl No'] = range(1, len(d2) + 1)          
+        d2.set_index(['Sl No'],inplace=True)
+        st.table(d2)
+    with volu:
+        d3 = {'volume change':vol}
+        d3 = pd.DataFrame(d3)
+        d3['Sl No'] = range(1, len(d3) + 1)
+        d3.set_index(['Sl No'],inplace=True)
+        st.table(d3)
+    
+    # print(to_ml)
+    # filter = ml.runsML(to_ml)
+    # st.write("ML trend predicted stocks :")
+    # st.write(filter)
+
 except:
     pass
 
@@ -150,3 +179,4 @@ st_lottie(
     width=720,
     key=None,
     )
+

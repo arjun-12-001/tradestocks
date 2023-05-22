@@ -1,18 +1,6 @@
-from yahooquery import Ticker
-import pandas as pd 
-
-comps = pd.read_csv("names_new.csv")
-good_ones = []
-for comp in comps["Symbol"]:
-  symbol = comp+".NS"
-  data = Ticker(symbol)
-  val = data.financial_data
-  if val[symbol]["recommendationKey"] == "strong_buy":
-    good_ones.append(symbol)
-    print(symbol)
-
-# for comp in comps["Symbol"]:
-#     symbol = comp+".NS"
-#     data = Ticker(symbol)
-#     val2 = data.financial_data
-#     print(val2)
+import database as db
+import yfinance as yf
+# d1 = yf.download("hdfcbank.ns",period = "1d",interval='1h')
+# price = float(d1.Close.tail(1).values)
+# name = "hdfcbank.ns"
+print(db.profits(3220,12,"eichermot.ns"))

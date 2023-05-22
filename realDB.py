@@ -32,13 +32,16 @@ db =deta.Base("new_userDB")
 def insert_user(username,name, password):
     return db.put({"key": username,"name": name, "password": password}) 
 
+# def LSTM_model(future_price,comp):
+#     for i in future_price:
+#         return db.put({""})
+
 def fetch_users():
     res = db.fetch()
     return res.items
 
 def get_user(username):
     return db.get(username)
-
 
 # insert_user("Arjun","Ronin001","12345")
 # insert_user("Chris","chris_boi","12345")
